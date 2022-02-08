@@ -1,29 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { withErrorApi } from '../../hoc-helpers/withErrorApi';
 import { getApiResource } from '../../utils/network';
 import { API_PEOPLE } from '../../constants/api';
-import { getPeopleId } from '../../services/getPeopleData';
+import { getPeopleId, getPeopleImage } from '../../services/getPeopleData';
+import PeopleList from '../../components/PeoplePage/PeopleList/PeopleList';
+
 import styles from './PeoplePage.module.css';
 
-const PeoplePage = () => {
+const PeoplePage = ({ setErrorApi }) => {
   const [people, setPeople] = useState(null);
 
   const getResource = async (url) => {
     const res = await getApiResource(url);
-    
-    const peopleList = res.results.map(({ name, url }) => {
-      const id = getPeopleId(url);
 
-      return {
-        // ЕСЛИ КЛЮЧ И ЗНАЧЕНИЕ СОВПАДАЮТ, ТО МОЖНО ПИСАТЬ СОКРАЩЁННО
-        //name: name,
-        //url: url
-        name,
-        url
+    if (res) {
+      const peopleList = res.results.map(({ name, url }) => {
+        const id = getPeopleId(url);
+        const img = getPeopleImage(id);
+
+        return {
+          id,
+          name,
+          img
+        }
+      })
+        
+      setPeople(peopleList);
+      setErrorApi(false);
+    } else {
+      setErrorApi(true);
       }
-    })
-
-    setPeople(peopleList);
-
   }
 
   useEffect(() => {
@@ -32,15 +38,10 @@ const PeoplePage = () => {
 
   return (
     <>
-      {people && (
-        <ul>
-          {people.map(({ name, url }) =>
-            <li key={name}>{name}</li>
-          )}
-        </ul>
-      )}
+      <h1>Navigation</h1>
+      {people && <PeopleList people={people} />}
     </>
   )
 }
 
-export default PeoplePage;
+export default withErrorApi(PeoplePage);
