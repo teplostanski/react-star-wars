@@ -7,14 +7,14 @@
 }
 .list__item {
   width: 190px;
-  margin: 20px;
+  margin: var(--spacing-medium);
   border-radius: 3px;
-  background-color: #fff;
+  background-color: var(--color-white);
   cursor: pointer;
 }
 .list__item a {
   text-decoration: none;
-  color: #000;
+  color: var(--color-black);
   text-align: center;
 }
 .person__photo {
